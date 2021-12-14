@@ -54,41 +54,29 @@ func TestReadCSVFile(t *testing.T) {
 			if err != nil {
 				t.Errorf("received error reading CSV file: %s", err)
 			}
-			assertString(t, "original filename", got.OriginalFilename, test.want.OriginalFilename)
-			assertString(t, "title", got.Title, test.want.Title)
-			assertString(t, "model", got.Model, test.want.Model)
-			assertString(t, "s/n", got.SerialNum, test.want.SerialNum)
+			assert(t, "original filename", got.OriginalFilename, test.want.OriginalFilename)
+			assert(t, "title", got.Title, test.want.Title)
+			assert(t, "model", got.Model, test.want.Model)
+			assert(t, "s/n", got.SerialNum, test.want.SerialNum)
 			assertFloat64(t, "center freq", got.CenterFreq, test.want.CenterFreq, 0.01)
 			assertFloat64(t, "span", got.Span, test.want.Span, 0.01)
 			assertFloat64(t, "rbw", got.RBW, test.want.RBW, 0.01)
 			assertFloat64(t, "vbw", got.VBW, test.want.VBW, 0.01)
 			assertFloat64(t, "ref level", got.RefLevel, test.want.RefLevel, 0.0000001)
 			assertFloat64(t, "sweep time", got.SweepTime, test.want.SweepTime, 0.00000001)
-			assertInt(t, "num points", got.NumPoints, test.want.NumPoints)
+			assert(t, "num points", got.NumPoints, test.want.NumPoints)
 		})
 	}
 }
 
-func assertInt(t *testing.T, label string, got, want int) {
+func assert(t *testing.T, label string, got, want interface{}) {
 	if got != want {
-		t.Errorf("\ngot %s  = %d\nwant %s = %d", label, got, label, want)
+		t.Errorf("\ngot  = `%#v` for %s\nwant = `%#v`", got, label, want)
 	}
 }
 
 func assertFloat64(t *testing.T, label string, got, want, tolerance float64) {
 	if diff := math.Abs(want - got); diff >= tolerance {
 		t.Errorf("\ngot %s  = %#v \t\nwant %s = %#v", label, got, label, want)
-	}
-}
-
-func assertBool(t *testing.T, label string, got, want bool) {
-	if got != want {
-		t.Errorf("\ngot = %t %s\nwant = %t", got, label, want)
-	}
-}
-
-func assertString(t *testing.T, label string, got, want string) {
-	if got != want {
-		t.Errorf("\ngot  = `%#v` for %s\nwant = `%#v`", got, label, want)
 	}
 }
