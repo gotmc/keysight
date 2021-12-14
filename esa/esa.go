@@ -68,136 +68,115 @@ func ReadCSVFile(filename string) (Trace, error) {
 
 	// Parse first line, which should contain the timestamp and original
 	// filename.
-	scanner.Scan()
-	line := scanner.Text()
-	s := strings.Split(line, ",")
-	if len(s) != 2 {
-		return trace, fmt.Errorf("error in first line: %s", line)
+	columns, err := getLineAndSplitColumns(scanner, 2)
+	if err != nil {
+		return trace, fmt.Errorf("error in first (date/filename) line: %s", err)
 	}
-	trace.OriginalFilename = s[1]
+	trace.OriginalFilename = columns[1]
 
 	// Parse second line, which should contain the title.
-	scanner.Scan()
-	line = scanner.Text()
-	s = strings.Split(line, ",")
-	if len(s) != 2 {
-		return trace, fmt.Errorf("error in Title line: %s", line)
+	columns, err = getLineAndSplitColumns(scanner, 2)
+	if err != nil {
+		return trace, fmt.Errorf("error in second (title) line: %s", err)
 	}
-	trace.Title = s[1]
+	trace.Title = columns[1]
 
 	// Parse third line, which should contain the model.
-	scanner.Scan()
-	line = scanner.Text()
-	s = strings.Split(line, ",")
-	if len(s) != 2 {
-		return trace, fmt.Errorf("error in model line: %s", line)
+	columns, err = getLineAndSplitColumns(scanner, 2)
+	if err != nil {
+		return trace, fmt.Errorf("error in third (model) line: %s", err)
 	}
-	trace.Model = s[1]
+	trace.Model = columns[1]
 
 	// Parse fourth line, which should contain the serial number.
-	scanner.Scan()
-	line = scanner.Text()
-	s = strings.Split(line, ",")
-	if len(s) != 2 {
-		return trace, fmt.Errorf("error in serial number line: %s", line)
+	columns, err = getLineAndSplitColumns(scanner, 2)
+	if err != nil {
+		return trace, fmt.Errorf("error in fourth (serial number) line: %s", err)
 	}
-	trace.SerialNum = strings.TrimSuffix(s[1], "\x00")
+	trace.SerialNum = strings.TrimSuffix(columns[1], "\x00")
 
 	// Parse fifth line, which should contain the center frequency value and
 	// units.
-	scanner.Scan()
-	line = scanner.Text()
-	s = strings.Split(line, ",")
-	if len(s) != 3 {
-		return trace, fmt.Errorf("error in center frequency line: %s", line)
+	columns, err = getLineAndSplitColumns(scanner, 3)
+	if err != nil {
+		return trace, fmt.Errorf("error in fifth (center freq) line: %s", err)
 	}
-	f, err := strconv.ParseFloat(s[1], 64)
+	centerFreq, err := strconv.ParseFloat(columns[1], 64)
 	if err != nil {
 		return trace, fmt.Errorf("error parsing center frequency: %s", err)
 	}
-	trace.CenterFreq = f
+	trace.CenterFreq = centerFreq
+
 	//TODO(mdr): Parse center freq units.
 
 	// Parse sixth line, which should contain the span value and units.
-	scanner.Scan()
-	line = scanner.Text()
-	s = strings.Split(line, ",")
-	if len(s) != 3 {
-		return trace, fmt.Errorf("error in span line: %s", line)
+	columns, err = getLineAndSplitColumns(scanner, 3)
+	if err != nil {
+		return trace, fmt.Errorf("error in sixth (span) line: %s", err)
 	}
-	f, err = strconv.ParseFloat(s[1], 64)
+	span, err := strconv.ParseFloat(columns[1], 64)
 	if err != nil {
 		return trace, fmt.Errorf("error parsing span: %s", err)
 	}
-	trace.Span = f
+	trace.Span = span
 
 	// Parse seventh line, which should contain the resolution bandwidth (RBW)
 	// value and units.
-	scanner.Scan()
-	line = scanner.Text()
-	s = strings.Split(line, ",")
-	if len(s) != 3 {
-		return trace, fmt.Errorf("error in rbw line: %s", line)
+	columns, err = getLineAndSplitColumns(scanner, 3)
+	if err != nil {
+		return trace, fmt.Errorf("error in seventh (rbw) line: %s", err)
 	}
-	f, err = strconv.ParseFloat(s[1], 64)
+	rbw, err := strconv.ParseFloat(columns[1], 64)
 	if err != nil {
 		return trace, fmt.Errorf("error parsing rbw: %s", err)
 	}
-	trace.RBW = f
+	trace.RBW = rbw
 
 	// Parse eighth line, which should contain the video bandwidth (vbw) value
 	// and units.
-	scanner.Scan()
-	line = scanner.Text()
-	s = strings.Split(line, ",")
-	if len(s) != 3 {
-		return trace, fmt.Errorf("error in vbw line: %s", line)
+	columns, err = getLineAndSplitColumns(scanner, 3)
+	if err != nil {
+		return trace, fmt.Errorf("error in eighth (vbw) line: %s", err)
 	}
-	f, err = strconv.ParseFloat(s[1], 64)
+	vbw, err := strconv.ParseFloat(columns[1], 64)
 	if err != nil {
 		return trace, fmt.Errorf("error parsing vbw: %s", err)
 	}
-	trace.VBW = f
+	trace.VBW = vbw
 
 	// Parse ninth line, which should contain the reference level value and
 	// units.
-	scanner.Scan()
-	line = scanner.Text()
-	s = strings.Split(line, ",")
-	if len(s) != 3 {
-		return trace, fmt.Errorf("error in ref level line: %s", line)
+	columns, err = getLineAndSplitColumns(scanner, 3)
+	if err != nil {
+		return trace, fmt.Errorf("error in ninth (ref level) line: %s", err)
 	}
-	f, err = strconv.ParseFloat(s[1], 64)
+	refLevel, err := strconv.ParseFloat(columns[1], 64)
 	if err != nil {
 		return trace, fmt.Errorf("error parsing ref level: %s", err)
 	}
-	trace.RefLevel = f
+	trace.RefLevel = refLevel
 
 	// Parse tenth line, which should contain the sweep time value and units.
-	scanner.Scan()
-	line = scanner.Text()
-	s = strings.Split(line, ",")
-	if len(s) != 3 {
-		return trace, fmt.Errorf("error in sweep time line: %s", line)
+	columns, err = getLineAndSplitColumns(scanner, 3)
+	if err != nil {
+		return trace, fmt.Errorf("error in tenth (sweep time) line: %s", err)
 	}
-	f, err = strconv.ParseFloat(s[1], 64)
+	sweepTime, err := strconv.ParseFloat(columns[1], 64)
 	if err != nil {
 		return trace, fmt.Errorf("error parsing sweep time: %s", err)
 	}
-	trace.SweepTime = f
+	trace.SweepTime = sweepTime
 
 	// Parse eleventh line, which should contain the number of points.
-	scanner.Scan()
-	line = scanner.Text()
-	s = strings.Split(line, ",")
-	if len(s) != 2 {
-		return trace, fmt.Errorf("error in num of points line: %s", line)
-	}
-	i, err := strconv.Atoi(s[1])
+	columns, err = getLineAndSplitColumns(scanner, 2)
 	if err != nil {
-		return trace, fmt.Errorf("error parsing num of points: %s", err)
+		return trace, fmt.Errorf("error in eleventh (num points) line: %s", err)
 	}
-	trace.NumPoints = i
+	numPoints, err := strconv.Atoi(columns[1])
+	if err != nil {
+		return trace, fmt.Errorf("error parsing num points: %s", err)
+	}
+	trace.NumPoints = numPoints
 
 	// Skip lines 12 and 13, which are blank.
 	scanner.Scan()
@@ -206,8 +185,8 @@ func ReadCSVFile(filename string) (Trace, error) {
 	// Parse 14th line, which should contain the labels for the frequency and
 	// trace data.
 	scanner.Scan()
-	line = scanner.Text()
-	s = strings.Split(line, ",")
+	line := scanner.Text()
+	s := strings.Split(line, ",")
 	if len(s) != 4 {
 		return trace, fmt.Errorf("error in trace label line: %s", line)
 	}
@@ -235,7 +214,7 @@ func ReadCSVFile(filename string) (Trace, error) {
 	trace.Trace1 = make([]float64, trace.NumPoints)
 	trace.Trace2 = make([]float64, trace.NumPoints)
 	trace.Trace3 = make([]float64, trace.NumPoints)
-	i = 0
+	i := 0
 	for scanner.Scan() {
 		line = scanner.Text()
 		s = strings.Split(line, ",")
@@ -270,4 +249,14 @@ func ReadCSVFile(filename string) (Trace, error) {
 	}
 
 	return trace, nil
+}
+
+func getLineAndSplitColumns(scanner *bufio.Scanner, numEntries int) ([]string, error) {
+	scanner.Scan()
+	line := scanner.Text()
+	s := strings.Split(line, ",")
+	if len(s) != numEntries {
+		return s, fmt.Errorf("wrong number of entries / got %d / expected %d", len(s), numEntries)
+	}
+	return s, nil
 }
