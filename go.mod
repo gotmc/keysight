@@ -1,3 +1,3 @@
 module github.com/gotmc/keysight
 
-go 1.17
+go 1.21
