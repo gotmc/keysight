@@ -103,7 +103,7 @@ func TestReadCSVFile(t *testing.T) {
 	}
 }
 
-func assert(t *testing.T, label string, got, want interface{}) {
+func assert(t *testing.T, label string, got, want any) {
 	if got != want {
 		t.Errorf("\ngot  = `%#v` for %s\nwant = `%#v`", got, label, want)
 	}
